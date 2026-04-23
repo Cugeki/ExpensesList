@@ -1,44 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchExpenses } from "../api/expenses";
-import { addExpense } from "../api/expenses";
-import { deleteExpense } from "../api/expenses";
+import { deleteExpense, fetchExpenses } from "../api/expenses";
+import AddExpense from "./AddExpense";
+import ExpenseFilter from "./ExpenseFilters";
 
-interface Expense {
-  id: number;
-  title: string;
-  amount: number;
-  date: string;
-  user_id: number;
-  category: string;
-}
-
-const CATEGORIES = [
-  "food",
-  "transport",
-  "entertainment",
-  "health",
-  "shopping",
-  "other",
-];
+import ExpenseItems from "./ExpenseItems";
+import type { Expense } from "./types/types";
 
 export default function ExpensesList() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [amount, setAmount] = useState("");
-  const [title, setTitle] = useState("");
+
   const [sortBy, setSortBy] = useState<
     "amount" | "date" | "title" | "category"
   >("amount");
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState("food");
+
   const [filterCategory, setFilterCategory] = useState("");
-
-  const POSTExpense = async () => {
-    await addExpense(title, Number(amount), category);
-  };
-
-  const delExpense = async (id: number) => {
-    await deleteExpense(id);
-  };
 
   const filteredAndSorted = [...expenses]
     .filter((expense) => {
@@ -58,75 +35,41 @@ export default function ExpensesList() {
       return 0;
     });
 
+  const sumExpenses = filteredAndSorted.reduce(
+    (sum, expense) => sum + Number(expense.amount),
+    0,
+  );
+  const delExpense = async (id: number) => {
+    await deleteExpense(id);
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
+  };
+
   useEffect(() => {
     const fetchExpense = async () => {
       const data = await fetchExpenses();
       setExpenses(data);
     };
     fetchExpense();
-  }, [expenses]);
+  }, []);
+
   return (
     <div>
-      <input
-        placeholder="Search by title..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-
-      <select
-        value={sortBy}
-        onChange={(e) =>
-          setSortBy(e.target.value as "amount" | "date" | "title" | "category")
-        }
-      >
-        <option value="amount">Sort by amount</option>
-        <option value="date">Sort by date</option>
-        <option value="title">Sort by title</option>
-        <option value="category">Sort by category</option>
-      </select>
-      <select
-        value={filterCategory}
-        onChange={(e) => setFilterCategory(e.target.value)}
-      >
-        <option value="">All Categories</option>
-        {CATEGORIES.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
       <h2>Expenses</h2>
+      <ExpenseFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        filterCategory={filterCategory}
+        setFilterCategory={setFilterCategory}
+      />
+      <ExpenseItems
+        filteredAndSorted={filteredAndSorted}
+        delExpense={delExpense}
+      />
 
-      <ul>
-        {filteredAndSorted.map((expense: Expense) => (
-          <li key={expense.id}>
-            {expense.title}: ${expense.amount} : {expense.category} on
-            {expense.date}
-            <button onClick={() => delExpense(expense.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-      <h3>Add Expense</h3>
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Amount"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        {CATEGORIES.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
-      <button onClick={POSTExpense}>Add</button>
+      <h3>Total Expenses: ${sumExpenses.toFixed(2)}</h3>
+      <AddExpense setExpenses={setExpenses} />
     </div>
   );
 }

@@ -44,5 +44,4 @@ export const deleteExpense = async (id: number) => {
   if (!res.ok) {
     throw new Error("Failed to delete expense ");
   }
-  return res.json();
 };
