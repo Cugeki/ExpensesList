@@ -11,17 +11,18 @@ import ExpenseItems from "./ExpenseItems";
 import type { Expense } from "./types/types";
 import "../styles/ExpensesList.css";
 import PieChartExp from "./PieChartExp";
-
+import { getBudget, updateBudget } from "../api/auth";
 export default function ExpensesList({ token }: { token: string }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const [sortBy, setSortBy] = useState<
     "amount" | "date" | "title" | "category"
   >("amount");
-
   const [searchTerm, setSearchTerm] = useState("");
-
   const [filterCategory, setFilterCategory] = useState("");
+
+  const [budget, setBudget] = useState<number>(0);
+  const [budgetInput, setBudgetInput] = useState("");
 
   const filteredAndSorted = [...expenses]
     .filter((expense) => {
@@ -42,7 +43,7 @@ export default function ExpensesList({ token }: { token: string }) {
     });
 
   const sumExpenses = filteredAndSorted.reduce(
-    (sum, expense) => sum + Number(expense.amount),
+    (sum, expense) => (expense.paid ? sum : sum + Number(expense.amount)),
     0,
   );
   const delExpense = async (id: number) => {
@@ -70,7 +71,12 @@ export default function ExpensesList({ token }: { token: string }) {
       const data = await fetchExpenses(token);
       setExpenses(data);
     };
+    const fetchBudget = async () => {
+      const data = await getBudget(token);
+      setBudget(Number(data.budget));
+    };
     fetchExpense();
+    fetchBudget();
   }, [token]);
 
   return (
@@ -95,6 +101,42 @@ export default function ExpensesList({ token }: { token: string }) {
         />
 
         <h3 className="total">Total Expenses: ${sumExpenses.toFixed(2)}</h3>
+        <div
+          className={`budget-section ${sumExpenses > budget && budget > 0 ? "over-budget" : ""}`}
+        >
+          <div className="budget-bar-container">
+            <div
+              className="budget-bar"
+              style={{
+                width: `${Math.min((sumExpenses / budget) * 100, 100)}%`,
+              }}
+            />
+          </div>
+          <p className="budget-text">
+            {budget > 0
+              ? `$${sumExpenses.toFixed(2)} of $${budget.toFixed(2)} budget used`
+              : "No budget set"}
+          </p>
+          <div className="budget-input-row">
+            <input
+              className="filter-input"
+              type="number"
+              placeholder="Set budget..."
+              value={budgetInput}
+              onChange={(e) => setBudgetInput(e.target.value)}
+            />
+            <button
+              className="add-btn"
+              onClick={async () => {
+                const updated = await updateBudget(token, Number(budgetInput));
+                setBudget(Number(updated.budget));
+                setBudgetInput("");
+              }}
+            >
+              Set
+            </button>
+          </div>
+        </div>
       </div>
       <div className="expenses-right">
         <AddExpense setExpenses={setExpenses} token={token} />

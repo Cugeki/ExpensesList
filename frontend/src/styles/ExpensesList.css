@@ -36,3 +36,45 @@
   flex-direction: column;
   align-items: center;
 }
+
+.budget-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e8e8e8;
+}
+
+.budget-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #c4c4c4c4;
+  border-radius: 99px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.budget-bar {
+  height: 100%;
+  background: #9e6b7a;
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+
+.budget-section.over-budget .budget-bar {
+  background: #e55;
+}
+
+.budget-text {
+  font-size: 0.875rem;
+  color: #aaa;
+  margin-bottom: 0.75rem;
+}
+
+.budget-section.over-budget .budget-text {
+  color: #e55;
+  font-weight: 500;
+}
+
+.budget-input-row {
+  display: flex;
+  gap: 8px;
+}

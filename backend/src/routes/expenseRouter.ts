@@ -70,4 +70,5 @@ router.patch("/:id/paid", authenticate, async (req: Request, res: Response) => {
 
   res.json(result.rows[0]);
 });
+
 export default router;
