@@ -46,3 +46,23 @@ export const deleteExpense = async (id: number, token: string) => {
     throw new Error("Failed to delete expense ");
   }
 };
+export const editExpense = async (
+  id: number,
+  title: string,
+  amount: number,
+  category: string,
+  token: string,
+) => {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ title, amount, category }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to edit expense");
+  }
+  return res.json();
+};

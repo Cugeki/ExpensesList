@@ -38,4 +38,21 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
   res.status(204).send();
 });
 
+router.patch("/:id", authenticate, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userId = (req as any).user.id;
+  const { amount, title, category } = req.body;
+
+  const result = await pool.query(
+    "UPDATE expenses SET title = $1, amount = $2, category = $3 WHERE id = $4 AND user_id = $5 RETURNING id, amount, title, category, TO_CHAR(date, 'YYYY-MM-DD') as date",
+    [title, amount, category, id, userId],
+  );
+
+  if (result.rows.length === 0) {
+    res.status(404).json({ error: "Expense not found" });
+    return;
+  }
+
+  res.json(result.rows[0]);
+});
 export default router;

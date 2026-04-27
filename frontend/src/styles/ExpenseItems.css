@@ -60,3 +60,72 @@
   color: #e55;
   background: rgba(255, 85, 85, 0.1);
 }
+
+.expense-item.editing {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 1px solid #9e6b7a;
+  transform: scale(1.01);
+  transition: all 0.2s;
+}
+
+.edit-input {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1a1a1a;
+  outline: none;
+  background: #f9f9f9;
+  margin-bottom: 4px;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.edit-input:focus {
+  border-color: #9e6b7a;
+}
+
+.save-btn {
+  background: #9e6b7a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.875rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #8a5a68;
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.4rem 0.5rem;
+  transition: color 0.2s;
+}
+
+.cancel-btn:hover {
+  color: #1a1a1a;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  color: #9e6b7a;
+  background: rgba(158, 107, 122, 0.1);
+}

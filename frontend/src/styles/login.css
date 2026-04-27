@@ -80,7 +80,7 @@
 
 .login-right {
   flex: 1.2;
-  background-image: url("src/styles/right-photo.png");
+  background-image: url("public/right-photo.png");
   background-size: cover;
   background-position: center;
   border-radius: 20px;
