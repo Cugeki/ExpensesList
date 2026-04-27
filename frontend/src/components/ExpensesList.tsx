@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { deleteExpense, fetchExpenses } from "../api/expenses";
 import AddExpense from "./AddExpense";
 import ExpenseFilter from "./ExpenseFilters";
-
 import ExpenseItems from "./ExpenseItems";
 import type { Expense } from "./types/types";
 import "../styles/ExpensesList.css";
+import PieChartExp from "./PieChartExp";
 
 export default function ExpensesList({ token }: { token: string }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -51,10 +51,13 @@ export default function ExpensesList({ token }: { token: string }) {
       setExpenses(data);
     };
     fetchExpense();
-  }, []);
+  }, [token]);
 
   return (
     <div className="expenses-layout">
+      <div className="expenses-chart">
+        <PieChartExp expenses={filteredAndSorted} />
+      </div>
       <div className="expenses-left">
         <ExpenseFilter
           searchTerm={searchTerm}
